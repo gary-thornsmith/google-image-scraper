@@ -92,9 +92,9 @@ async function extractImages() {
 
   async function getData() {
     try {
-      const res = await fetch('https://barebones-n8n-server.onrender.com/data');
+      const res = await fetch('https://google-image-scraper-1.onrender.com');
       const json = await res.json();
-      document.getElementById('textbox').value = json.text || '';
+      document.getElementById('textarea').value = json.text || '';
     } catch (e) {
       console.error('Could not fetch n8n data:', e);
     }
