@@ -86,13 +86,7 @@ async function extractImages() {
 
   document.getElementById('status').innerText = 'Done!';
 }
-async function getData() {
-    const res = await fetch('https://barebones-n8n-server.onrender.com/data');
-    const json = await res.json();
-    document.getElementById('textbox').value = json.text;
-  }
 
-  setInterval(getData, 3000);
 ;
 
 
