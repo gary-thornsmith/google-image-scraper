@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,7 +27,7 @@
   async function fetchHTML(url, retries = 5, delay = 1000) {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      const proxyUrl = https://api.allorigins.win/get?url=${encodeURIComponent(url)};
+      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
       const res = await fetch(proxyUrl);
       const data = await res.json();
       if (!data.contents.includes('<html')) {
@@ -32,11 +35,11 @@
       }
       return data.contents;
     } catch (e) {
-      console.warn(Attempt ${attempt} failed for ${url}, e);
+      console.warn(`Attempt ${attempt} failed for ${url}`, e);
       if (attempt < retries) {
         await new Promise(resolve => setTimeout(resolve, delay));
       } else {
-        console.error(Failed to fetch ${url} after ${retries} attempts);
+        console.error(`Failed to fetch ${url} after ${retries} attempts`);
         return null;
       }
     }
@@ -68,7 +71,7 @@ async function extractImages() {
     const html = await fetchHTML(url);
     if (!html) {
       const msg = document.createElement('p');
-      msg.innerText = Failed to fetch ${url} after retries;
+      msg.innerText = `Failed to fetch ${url} after retries`;
       resultsDiv.appendChild(msg);
       continue;
     }
@@ -79,15 +82,13 @@ async function extractImages() {
       resultsDiv.appendChild(img);
     } else {
       const msg = document.createElement('p');
-      msg.innerText = No second usable image found in ${url};
+      msg.innerText = `No second usable image found in ${url}`;
       resultsDiv.appendChild(msg);
     }
   }
 
   document.getElementById('status').innerText = 'Done!';
-}
-
-;
+};
 
 
   </script>
