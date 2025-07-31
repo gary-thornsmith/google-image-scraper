@@ -27,71 +27,71 @@
   <div id="results"></div>
 
   <script>
-
-async function fetchHTML(url, retries = 5, delay = 1000) {
-  for (let attempt = 1; attempt <= retries; attempt++) {
-    try {
-      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-      const res = await fetch(proxyUrl);
-      const data = await res.json();
-      if (!data.contents.includes('<html')) {
-        throw new Error('Invalid HTML content');
-      }
-      return data.contents;
-    } catch (e) {
-      console.warn(`Attempt ${attempt} failed for ${url}`, e);
-      if (attempt < retries) {
-        await new Promise(resolve => setTimeout(resolve, delay));
-      } else {
-        console.error(`Failed to fetch ${url} after ${retries} attempts`);
-        return null;
-      }
-    }
-  }
-}
-
-function extractSecondImageSrc(html) {
-  try {
-    const matches = [...html.matchAll(/<img[^>]+src="([^"]+)"/g)];
-    for (let i = 1; i < matches.length; i++) {
-      const src = matches[i][1];
-      if (!src.includes('googlelogo')) {
-        return src.startsWith('http') ? src : 'https://www.google.com' + src;
+    async function fetchHTML(url, retries = 5, delay = 1000) {
+      for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+          const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+          const res = await fetch(proxyUrl);
+          const data = await res.json();
+          if (!data.contents.includes('<html')) {
+            throw new Error('Invalid HTML content');
+          }
+          return data.contents;
+        } catch (e) {
+          console.warn(`Attempt ${attempt} failed for ${url}`, e);
+          if (attempt < retries) {
+            await new Promise(resolve => setTimeout(resolve, delay));
+          } else {
+            console.error(`Failed to fetch ${url} after ${retries} attempts`);
+            return null;
+          }
+        }
       }
     }
-  } catch (err) {
-    console.error("Error parsing image src", err);
-  }
-  return null;
-}
 
-async function extractImages() {
-  const urls = document.getElementById('urls').value.trim().split('\n');
-  const resultsDiv = document.getElementById('results');
-  resultsDiv.innerHTML = '';
-  document.getElementById('status').innerText = 'Fetching images...';
-
-  for (const url of urls) {
-    const html = await fetchHTML(url);
-    if (!html) {
-      const msg = document.createElement('p');
-      msg.innerText = `Failed to fetch ${url} after retries`;
-      resultsDiv.appendChild(msg);
-      continue;
+    function extractSecondImageSrc(html) {
+      try {
+        const matches = [...html.matchAll(/<img[^>]+src="([^"]+)"/g)];
+        for (let i = 1; i < matches.length; i++) {
+          const src = matches[i][1];
+          if (!src.includes('googlelogo')) {
+            return src.startsWith('http') ? src : 'https://www.google.com' + src;
+          }
+        }
+      } catch (err) {
+        console.error("Error parsing image src", err);
+      }
+      return null;
     }
-    const src = extractSecondImageSrc(html);
-    if (src) {
-      const img = document.createElement('img');
-      img.src = src;
-      resultsDiv.appendChild(img);
-    } else {
-      const msg = document.createElement('p');
-      msg.innerText = `No second usable image found in ${url}`;
-      resultsDiv.appendChild(msg);
-    }
-  }
 
-  document.getElementById('status').innerText = 'Done!';
+    async function extractImages() {
+      const urls = document.getElementById('urls').value.trim().split('\n');
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '';
+      document.getElementById('status').innerText = 'Fetching images...';
+
+      for (const url of urls) {
+        const html = await fetchHTML(url);
+        if (!html) {
+          const msg = document.createElement('p');
+          msg.innerText = `Failed to fetch ${url} after retries`;
+          resultsDiv.appendChild(msg);
+          continue;
+        }
+        const src = extractSecondImageSrc(html);
+        if (src) {
+          const img = document.createElement('img');
+          img.src = src;
+          resultsDiv.appendChild(img);
+        } else {
+          const msg = document.createElement('p');
+          msg.innerText = `No second usable image found in ${url}`;
+          resultsDiv.appendChild(msg);
+        }
+      }
+
+      document.getElementById('status').innerText = 'Done!';
+    }
 
     // 🆕 Fetch from n8n backend every 3 seconds and update the input box
     async function getData() {
@@ -110,5 +110,3 @@ async function extractImages() {
   </script>
 </body>
 </html>
-
-
